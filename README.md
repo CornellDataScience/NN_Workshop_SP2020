@@ -7,7 +7,7 @@ Install anaconda by following these instructions: https://www.cs.cornell.edu/cou
 After doing this, in terminal (Mac or Linux) or Anaconda Prompt (Windows) type in the following command:
 
 ```bash
-conda create -f environment/environment.yml --prefix ./environment
+conda env create -f environment/environment.yml --prefix ./environment
 ```
 
 Then you will have everything installed and the virtual environment created!
@@ -16,4 +16,10 @@ Before starting to work with these files, make sure to run the command below:
 
 ```bash
 conda activate ./environment
+```
+
+**Updating** if you previously ran the above commands:
+
+```bash
+conda env update --prefix ./environment --file environment/environment.yml  --prune
 ```
