@@ -25,6 +25,7 @@ environment/ssl/**
 environment/translations/**
 image_ids.pkl
 data_subset.zip
+weights/**
 
 # Distribution / packaging
 .Python

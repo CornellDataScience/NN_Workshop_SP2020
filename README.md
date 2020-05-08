@@ -36,5 +36,10 @@ Now you are good to go!
 
 
 ## Model Weights
+Download weights from [here]
 
-Download the weights from this [link](https://drive.google.com/a/cornell.edu/uc?id=0B9P1L--7Wd2vT0FtdThWREhjNkU)
+## Run Sample
+```bash
+$ python process_video.py -i dummy_video.mp4 -o dummyfolder -ov dummy_output.mp4 --weights-file weights/fcn_weights.bin --cpus 2 --queue-size 16 -p
+```
+
