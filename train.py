@@ -196,7 +196,8 @@ if __name__ == "__main__":
       if not os.path.isdir(args.ckpt_path):
         os.makedirs(args.ckpt_path)
       print("Saving weights...")
-      torch.save(model.state_dict(), args.ckpt_path)
+      save_path = os.path.join(args.ckpt_path, "fcn_weights.bin")
+      torch.save(model.state_dict(), save_path)
 
     ## Print a bunch of metrics:
     print(f"Training loss: {train_loss}")

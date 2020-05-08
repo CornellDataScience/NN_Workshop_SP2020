@@ -47,6 +47,7 @@ class ZoomDataset(Dataset):
         img_dict = self.coco.loadImgs([img_id])[0]
         img_path = os.path.join(self.image_dir, img_dict["file_name"])
         img = Image.open(img_path).resize((224,224), Image.BILINEAR)
+        img = img.convert("RGB")
         img = np.array(img).transpose(2, 0, 1)
 
         catIds = self.coco.getCatIds(catNms=['person'])
@@ -58,6 +59,7 @@ class ZoomDataset(Dataset):
             maskArr = np.maximum(self.coco.annToMask(anns[i]), maskArr)
         
         mask = Image.fromarray(maskArr).resize((224,224), Image.BILINEAR)
+        mask = np.expand_dims(np.array(mask), axis=0)
 
         x = torch.tensor(img, dtype=torch.float32)
         y = torch.tensor(mask, dtype=torch.float32)
