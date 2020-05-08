@@ -1,6 +1,7 @@
 import os
 import pickle
 
+import torch
 import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader, SubsetRandomSampler
@@ -46,6 +47,8 @@ class ZoomDataset(Dataset):
         img_dict = self.coco.loadImgs([img_id])[0]
         img_path = os.path.join(self.image_dir, img_dict["file_name"])
         img = Image.open(img_path).resize((224,224), Image.BILINEAR)
+        img = img.convert("RGB")
+        img = np.array(img).transpose(2, 0, 1)
 
         catIds = self.coco.getCatIds(catNms=['person'])
         annIds = self.coco.getAnnIds(imgIds=img_dict['id'], catIds=catIds, iscrowd=None)
@@ -56,14 +59,17 @@ class ZoomDataset(Dataset):
             maskArr = np.maximum(self.coco.annToMask(anns[i]), maskArr)
         
         mask = Image.fromarray(maskArr).resize((224,224), Image.BILINEAR)
+        mask = np.expand_dims(np.array(mask), axis=0)
 
-        return np.array(img), np.array(mask)
+        x = torch.tensor(img, dtype=torch.float32)
+        y = torch.tensor(mask, dtype=torch.float32)
+        return (x, y)
 
 
 def get_data_loaders(path_to_image_ids,
                      path_to_images,
                      path_to_labels,
-                     train_val_test=[0.8, 0.2, 0.2], 
+                     train_val_test=[0.8, 0.1, 0.1], 
                      batch_size=32):
     """get_data_loaders [summary]
     
