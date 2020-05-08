@@ -37,4 +37,3 @@ Now you are good to go!
 
 ## Model Weights
 
-Download the weights from this [link](https://drive.google.com/a/cornell.edu/uc?id=0B9P1L--7Wd2vT0FtdThWREhjNkU)
