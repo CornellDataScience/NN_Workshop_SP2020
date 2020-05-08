@@ -25,7 +25,7 @@ conda env update --prefix ./environment --file environment/environment.yml  --pr
 ```
 
 ## Data Set up
-Download the data zip folder, annotations, and img ids from [here](https://drive.google.com/).
+Download the data zip folder, annotations, and img ids from [here](https://drive.google.com/drive/folders/1dMD7Z_YoKF4g_O7bzTU8qpF1jxLd1xW-).
 
 1. Unzip the subset data zipfile. You should now have a coco folder.
 2. Inside that folder you should see a folder labeled images. Create a folder named annotations
@@ -36,7 +36,8 @@ Now you are good to go!
 
 
 ## Model Weights
-Download weights from [here]
+Download weights from [here](https://drive.google.com/drive/folders/1dMD7Z_YoKF4g_O7bzTU8qpF1jxLd1xW-)
+Put them in a weights folder!
 
 ## Run Sample
 ```bash
