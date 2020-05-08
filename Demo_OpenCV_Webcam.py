@@ -29,7 +29,7 @@ OUT_VIDEO = "demo_processed.mp4"
 
 # Unfortunately Macs have some difficulty loading files :( so this is done manually
 # We wanted the same experience for everyone.
-BACKGROUND_IMAGE = "backgrounds/theoffice.jpg"
+BACKGROUND_IMAGE = os.path.join("backgrounds","theoffice.jpg")
 ##
 
 def create_pipeline():
