@@ -9,10 +9,12 @@ import multiprocessing as mp
 import io
 from PIL import Image
 from tqdm import tqdm
+import time
 
 from pipeline.capture_video import CaptureVideo
 from pipeline.async_predict import AsyncPredict
 from pipeline.separate_background import SeparateBackground
+from pipeline.virtual_background import VirtualBackground
 from pipeline.save_video import SaveVideo
 from fcn import load_fcn
 ##
@@ -27,6 +29,10 @@ CPUS = 2
 QUEUE_SIZE = 16
 OUTPUT = "demo"
 OUT_VIDEO = "demo_processed.mp4"
+
+# Unfortunately Macs have some difficulty loading files :( so this is done manually
+# We wanted the same experience for everyone.
+BACKGROUND_IMAGE = "theoffice.jpg"
 ##
 
 def create_pipeline():
@@ -38,9 +44,10 @@ def create_pipeline():
                            queue_size=QUEUE_SIZE,
                            ordered=True
                           )
-    separate_background = SeparateBackground("vis_image")
+    # separate_background = SeparateBackground("vis_image")
+    separate_background = VirtualBackground("vis_image", BACKGROUND_IMAGE)
 
-    save_video = SaveVideo("vis_image", os.path.join(OUTPUT, OUT_VIDEO), capture_video.fps)
+    save_video = SaveVideo("vis_image", os.path.join(OUTPUT, OUT_VIDEO), capture_video.fps*0.5)
 
     pipeline = (capture_video |
                 predict |
@@ -96,9 +103,13 @@ def main():
     # ---===--- Event LOOP Read and display frames, operate the GUI --- #
     cap = cv2.VideoCapture(0)
     recording = False
+    start = time.time()
+    not_touched = True
 
     while True:
         event, values = window.read(timeout=20)
+        if time.time() - start >= 5 and not_touched:
+            event = 'Exit'
         if event == 'Exit' or event == sg.WIN_CLOSED:
             if writer:
                 writer.release()
@@ -108,10 +119,12 @@ def main():
             return
 
         elif event == 'Record':
+            not_touched = False
             recording = True
             if cap is None:
                 cap = cv2.VideoCapture(0)
         elif event == 'Display':
+            not_touched = False
             recording = False
             if processing != "DONE":
                 pass
@@ -119,6 +132,7 @@ def main():
                 display = True
                 cap = cv2.VideoCapture(os.path.join(OUTPUT, OUT_VIDEO))
         elif event == 'Process':
+            not_touched = False
             i = 0
             recording = False
             processing = True
@@ -150,7 +164,7 @@ def main():
             ret, frame = cap.read()
             if ret:
                 h, w = frame.shape[:2]
-                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).resize((w//2, h//2), Image.BILINEAR)
+                img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).resize((640, 480), Image.BILINEAR)
                 bio = io.BytesIO()
                 img.save(bio, format="PNG")
                 window['image'].update(data=bio.getvalue())
@@ -165,7 +179,7 @@ def main():
             ret, frame = cap.read()
             h, w = frame.shape[:2]
             # print("The FPS is {}".format(cap.get(cv2.CAP_PROP_FPS)))
-            img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).resize((w//2, h//2), Image.BILINEAR)
+            img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).resize((640, 480), Image.BILINEAR)
             bio = io.BytesIO()
             img.save(bio, format="PNG")
             if writer is None:
