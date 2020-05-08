@@ -1,5 +1,9 @@
 from pipeline.pipeline import Pipeline
 
+# import os
+# os.environ['OPENCV_IO_MAX_IMAGE_PIXELS']=str(2**64)
+from PIL import Image
+
 import numpy as np
 import cv2
 
@@ -24,27 +28,26 @@ class SeparateBackground(Pipeline):
             return
 
         predictions = data["predictions"]
-        if "instances" not in predictions:
-            return
 
-        instances = predictions["instances"]
-        if not instances.has("pred_masks"):
-            return
+        # print("\nPredictions is of type {} with shape {}\n\n".format(type(predictions), predictions.shape))
+        instances = predictions[0][0]
 
         # Sum up all the instance masks
-        mask = instances.pred_masks.cpu().sum(0) >= 1
-        mask = mask.numpy().astype("uint8")*255
+        mask = instances >= 0.5
+        mask = mask.astype("uint8")*255
         # Create 3-channels mask
-        mask = np.stack([mask, mask, mask], axis=2)
+        mask = np.float32(np.stack([mask, mask, mask], axis=2))
 
         # Apply a slight blur to the mask to soften edges
         mask = cv2.GaussianBlur(mask, self.me_kernel, 0)
 
         # Take the foreground input image
-        foreground = data["image"]
+        foreground = (data["image"].detach().numpy()[0]).transpose(1,2,0)
+
+        # print("\n Image is type {} and of size {}\n".format(type(foreground),foreground.shape))
 
         # Create a Gaussian blur for the background image
-        background = cv2.GaussianBlur(foreground, self.bg_kernel, 0)
+        background = cv2.GaussianBlur(np.float32(foreground), self.bg_kernel, 0)
 
         if self.desaturate:
             # Convert background into grayscale
@@ -57,6 +60,7 @@ class SeparateBackground(Pipeline):
         foreground = foreground.astype(float)
         background = background.astype(float)
 
+        # print("Forground shape is {} while mask shape is {}".format(foreground.shape, mask.shape))
         # Normalize the alpha mask to keep intensity between 0 and 1
         mask = mask.astype(float)/255.0
 
@@ -70,4 +74,6 @@ class SeparateBackground(Pipeline):
         dst_image = cv2.add(foreground, background)
 
         # Return a normalized output image for display
-        data[self.dst] = dst_image.astype("uint8")
+        final_dst_image = Image.fromarray(dst_image.astype("uint8")).resize(data["shape"][:2], Image.BILINEAR)
+        data[self.dst] = np.array(final_dst_image)
+        # print("\nGot to the end\n")

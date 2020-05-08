@@ -28,10 +28,13 @@ class CaptureVideo(Pipeline):
 
         while self.cap.running():
             image = self.cap.read()
+            # print("\nImage Shape is {}".format(image.shape))
+            # print("Frame Size is {}\n\n".format(self.frame_size))
             data = {
                 "frame_num": self.frame_num,
                 "image_id": f"{self.frame_num:06d}",
                 "image": image,
+                "shape": self.frame_size
             }
             self.frame_num += 1
             if self.filter(data):

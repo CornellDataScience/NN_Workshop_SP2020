@@ -1,3 +1,5 @@
+
+
 class Pipeline(object):
     """Common pipeline class fo all pipeline tasks."""
 
@@ -18,8 +20,8 @@ class Pipeline(object):
             except StopIteration:
                 return
 
-    def __call__(self, other):
-        """Allows to connect the pipeline task using | operator."""
+    def __or__(self, other):
+        """Allows to connect the pipeline task using | operator just like in bash."""
 
         if other is not None:
             other.source = self.generator()

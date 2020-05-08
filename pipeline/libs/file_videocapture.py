@@ -1,4 +1,7 @@
 import cv2
+import numpy as np
+from PIL import Image
+import torch
 import time
 
 from threading import Thread
@@ -77,7 +80,12 @@ class FileVideoCapture:
 
     def read(self):
         # return next frame in the queue
-        return self.queue.get()
+        # return self.queue.get()
+        arr = self.queue.get()
+        img = Image.fromarray(arr).resize((224,224), Image.BILINEAR)
+        new_arr = np.expand_dims(np.array(img).transpose(2, 0, 1), axis=0)
+        final = torch.from_numpy(new_arr.astype(np.float32))
+        return final
 
     # Insufficient to have consumer use while(more()) which does
     # not take into account if the producer has reached end of

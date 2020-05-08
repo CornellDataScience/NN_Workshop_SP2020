@@ -7,7 +7,7 @@ from pipeline.pipeline import Pipeline
 class SaveVideo(Pipeline):
     """Pipeline task to save video."""
 
-    def __init__(self, src, filename, fps=30, fourcc='MJPG'):
+    def __init__(self, src, filename, fps=30, fourcc='mp4v'):
         dirname = os.path.dirname(os.path.abspath(filename))
         os.makedirs(dirname, exist_ok=True)
 
@@ -20,6 +20,7 @@ class SaveVideo(Pipeline):
         super().__init__()
 
     def map(self, data):
+        # print(data.keys())
         image = data[self.src]
 
         if self.writer is None:

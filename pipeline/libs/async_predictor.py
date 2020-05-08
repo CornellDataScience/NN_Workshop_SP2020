@@ -19,11 +19,11 @@ class AsyncPredictor:
             self.model_path = model_path
             self.task_queue = task_queue
             self.result_queue = result_queue
-            self.model = model_class()
+            self.model = model_class(1, from_checkpoint=model_path)
             super().__init__()
 
         def run(self):
-            predictor = model
+            predictor = self.model
 
             while True:
                 task = self.task_queue.get()
@@ -31,8 +31,8 @@ class AsyncPredictor:
                     break
 
                 idx, data = task
-                result = predictor(data)
-                self.result_queue.put((idx, result))
+                result = predictor(torch.from_numpy(data))
+                self.result_queue.put((idx, result.detach().numpy()))
 
     def __init__(self, model_path, model_class, num_cpus=1, queue_size=3, ordered=True):
         num_cpus = min(mp.cpu_count(), num_cpus)
@@ -63,7 +63,7 @@ class AsyncPredictor:
     def put(self, image):
         if self.ordered:
             self.put_idx += 1
-            self.task_queue.put((self.put_idx, image))
+            self.task_queue.put((self.put_idx, image.detach().numpy()))
         else:
             image_idx, image = image
             self.task_queue.put((image_idx, image))

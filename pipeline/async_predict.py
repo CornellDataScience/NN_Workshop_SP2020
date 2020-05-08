@@ -7,9 +7,9 @@ from pipeline.libs.async_predictor import AsyncPredictor
 class AsyncPredict(Pipeline):
     """Pipeline task to perform prediction asynchronously (in separate processes)."""
 
-    def __init__(self, model_path, model_class, num_cpus=1, queue_size=3, ordered=True):
+    def __init__(self, model_path, load_model_fn, num_cpus=1, queue_size=3, ordered=True):
         self.predictor = AsyncPredictor(model_path,
-                                        model_class,
+                                        load_model_fn,
                                         num_cpus=num_cpus,
                                         queue_size=queue_size,
                                         ordered=ordered)
