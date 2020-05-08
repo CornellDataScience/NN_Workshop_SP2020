@@ -46,6 +46,7 @@ class ZoomDataset(Dataset):
         img_dict = self.coco.loadImgs([img_id])[0]
         img_path = os.path.join(self.image_dir, img_dict["file_name"])
         img = Image.open(img_path).resize((224,224), Image.BILINEAR)
+        img = np.array(img).transpose(2, 0, 1)
 
         catIds = self.coco.getCatIds(catNms=['person'])
         annIds = self.coco.getAnnIds(imgIds=img_dict['id'], catIds=catIds, iscrowd=None)
@@ -63,7 +64,7 @@ class ZoomDataset(Dataset):
 def get_data_loaders(path_to_image_ids,
                      path_to_images,
                      path_to_labels,
-                     train_val_test=[0.8, 0.2, 0.2], 
+                     train_val_test=[0.8, 0.1, 0.1], 
                      batch_size=32):
     """get_data_loaders [summary]
     
