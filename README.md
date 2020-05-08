@@ -23,3 +23,18 @@ conda activate ./environment
 ```bash
 conda env update --prefix ./environment --file environment/environment.yml  --prune
 ```
+
+## Data Set up
+Download the data zip folder, annotations, and img ids from [here](https://drive.google.com/).
+
+1. Unzip the subset data zipfile. You should now have a coco folder.
+2. Inside that folder you should see a folder labeled images. Create a folder named annotations
+3. Put `instances_train2017.json` within the annotations folder
+4. Make sure `image_ids.pkl` is in the coco folder
+
+Now you are good to go!
+
+
+## Model Weights
+
+Download the weights from this [link](https://drive.google.com/a/cornell.edu/uc?id=0B9P1L--7Wd2vT0FtdThWREhjNkU)
