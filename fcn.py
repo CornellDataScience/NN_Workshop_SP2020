@@ -16,17 +16,22 @@ class ConvBlock(nn.Module):
   """
   def __init__(self, in_channels, out_channels):
     super().__init__()
-    self.block = nn.Sequential(
-      nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-      nn.BatchNorm2d(out_channels),
-      nn.ReLU(),
-      nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-      nn.BatchNorm2d(out_channels),
-      nn.ReLU(),
-    )
+    ## ===========================================================
+    ## BEGIN: YOUR CODE.
+    ## ===========================================================
+
+    ## ===========================================================
+    ## END: YOUR CODE.
+    ## ===========================================================
   
   def forward(self, x):
-    x = self.block(x)
+    ## ===========================================================
+    ## BEGIN: YOUR CODE.
+    ## ===========================================================
+
+    ## ===========================================================
+    ## END: YOUR CODE.
+    ## ===========================================================
     return x
 
 
@@ -41,13 +46,22 @@ class DownSample(nn.Module):
   """
   def __init__(self, in_channels, out_channels):
     super().__init__()
+    ## ===========================================================
+    ## BEGIN: YOUR CODE.
+    ## ===========================================================
 
-    self.conv_block = ConvBlock(in_channels, out_channels)
-    self.pool = nn.MaxPool2d(2, stride=2)
+    ## ===========================================================
+    ## END: YOUR CODE.
+    ## ===========================================================
   
   def forward(self, x):
-    x = self.conv_block(x)
-    x = self.pool(x)
+    ## ===========================================================
+    ## BEGIN: YOUR CODE.
+    ## ===========================================================
+
+    ## ===========================================================
+    ## END: YOUR CODE.
+    ## ===========================================================
     return x
 
 
@@ -89,14 +103,6 @@ class FCN(nn.Module):
     ## BEGIN: YOUR CODE.
     ## ===========================================================
 
-    self.down1 = DownSample(64, 128)
-    self.down2 = DownSample(128, 256)
-    self.down3 = DownSample(256, 512)
-    self.down4 = DownSample(512, 512)
-
-    self.up1 = UpSample(512, 512)
-    self.up2 = UpSample(512, 256)
-
     ## ===========================================================
     ## END: YOUR CODE.
     ## ===========================================================
@@ -111,21 +117,7 @@ class FCN(nn.Module):
     ## ===========================================================
     ## BEGIN: YOUR CODE.
     ## ===========================================================
-
-    x0 = self.block1(x)          # 1/2 (h, w), #c = 64
-    x1 = self.down1(x0)           # 1/4 (h, w), #c = 128
-    x2 = self.down2(x1)          # 1/8 (h, w), #c = 256
-    x3 = self.down3(x2)          # 1/16 (h, w), #c = 512
-    x4 = self.down4(x3)          # 1/32 (h, w), #c = 512
-
-    x_out = x4                   # 1/32 (h, w), #c = 512
-    x_out = self.up1(x_out) 
-    x_out += x3                  # 1/16 (h, w), #c = 512
-
-    x_out = self.up2(x_out) 
-    x_out += x2                  # 1/8 (h, w), #c = 256
-
-    x_out = self.depth_reduce(x_out) # 1/8 (h, w), #c = 64
+    x_out = None
 
     ## ===========================================================
     ## END: YOUR CODE.
