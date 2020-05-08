@@ -193,6 +193,7 @@ if __name__ == "__main__":
 
     # Save model weights
     if val_iou > best_val_iou:
+      best_val_iou = val_iou
       if not os.path.isdir(args.ckpt_path):
         os.makedirs(args.ckpt_path)
       print("Saving weights...")
