@@ -1,6 +1,7 @@
 import os
 import pickle
 
+import torch
 import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader, SubsetRandomSampler
@@ -58,7 +59,9 @@ class ZoomDataset(Dataset):
         
         mask = Image.fromarray(maskArr).resize((224,224), Image.BILINEAR)
 
-        return np.array(img), np.array(mask)
+        x = torch.tensor(img, dtype=torch.float32)
+        y = torch.tensor(mask, dtype=torch.float32)
+        return (x, y)
 
 
 def get_data_loaders(path_to_image_ids,
