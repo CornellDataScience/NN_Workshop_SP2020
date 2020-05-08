@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
   # Load optimizer and loss
   loss_fn = nn.BCEWithLogitsLoss()
-  optimizer = optim.Adam(model.parameters(), lr=0.001)
+  optimizer = optim.Adam(model.parameters(), lr=config["lr"])
 
   ## Set up Data Loaders.
   epochs = config["epochs"]
