@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from fcn import FCN
+from fcn import FCN, load_fcn
 from dataset import get_data_loaders
 
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
   device = torch.device("cuda:0" if use_cuda else "cpu")
 
   # Load model.
-  model = FCN(num_classes=1)
+  model = load_fcn(num_classes=1)
   model.to(device)
 
   # Load optimizer and loss

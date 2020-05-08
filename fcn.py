@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -133,10 +134,33 @@ class FCN(nn.Module):
     x_out = self.final_conv(x_out)
     return x_out
 
+
+def load_fcn(num_classes=1, from_checkpoint=None):
+  """
+  Creates an FCN model, and if specified, load's weights from a
+  check point file.\n
+  Requires:\n
+    `num_classes`: Number of classes that the model should expect to output.\n
+    `from_checkpoint`: (string) path to model checkpoint file containing weights\n
+  """
+  model = FCN(num_classes=num_classes)
+
+  if from_checkpoint:
+    assert os.path.isfile(from_checkpoint),\
+      "Model's .pth or .bin checkpoint file does not exist"
+
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_cuda else "cpu")
+    
+    state_dict = torch.load(from_checkpoint, map_location=device)
+    model.load_state_dict(state_dict)
+
+  return model
+
   
 # Small test
 if __name__ == "__main__":
-  fcn = FCN()
+  fcn = load_fcn(num_classes=1)
   x = torch.randn(1, 3, 224, 224)
   out = fcn(x)
   print(out.shape)
