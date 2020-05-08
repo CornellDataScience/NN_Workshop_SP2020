@@ -10,56 +10,21 @@ from fcn import FCN, load_fcn
 from dataset import get_data_loaders
 
 
-def calculate_iou_prec_recall(preds, label_masks, pred_threshold=0.0):
-  """
-  Calculate IoU, Precision and Recall per class for entire batch of images.
-  Requires:
-    preds: model preds array, shape        (batch, #c, h, w)
-    label_masks: ground truth masks, shape (batch, #c, h, w)
-    pred_threshold: Confidence threshold over which pixel prediction counted.
-  Returns:
-    ious, precs, recall per class: shape (#c)
-  """
-  # Change view so that shape is (batch, h, w, #c)
-  preds = preds.transpose(0, 2, 3, 1)
-  label_masks = label_masks.transpose(0, 2, 3, 1)
-
-  # Reduce dimensions across all but classes dimension.
-  preds = preds.reshape(-1, preds.shape[-1])
-  label_masks = label_masks.reshape(-1, label_masks.shape[-1])
-
-  preds = preds > pred_threshold
-  intersection = np.logical_and(preds, label_masks)
-  union = np.logical_or(preds, label_masks)
-  iou_scores = np.sum(intersection, axis=0) / np.sum(union, axis=0)
-  iou_scores[np.isnan(iou_scores)] = 0.0
-
-  precision = np.sum(intersection, axis=0)/np.sum(preds, axis=0)
-  precision[np.isnan(precision)] = 0.0
-
-  recall = np.sum(intersection, axis=0)/np.sum(label_masks, axis=0)
-  recall[np.isnan(recall)] = 0.0
-
-  return iou_scores, precision, recall
-
-
 def train_step(model, loss_fn, optimizer, images, labels):
   """
   Performs one training step over a batch.
   Passes the batch of images through the model, and backprops the gradients.
   Returns the resulting model predictions and loss values.
   """
-  # Flush the gradient buffers
-  optimizer.zero_grad()
-  
-  # Feed model
-  preds = model(images)
-  loss = loss_fn(preds, labels)
+  ## ===========================================================
+  ## BEGIN: YOUR CODE.
+  ## ===========================================================
+  preds, loss = None, None
 
-  # Backpropagate
-  loss.backward()
-  optimizer.step()
 
+  ## ===========================================================
+  ## END: YOUR CODE.
+  ## ===========================================================
   return preds, loss
 
 def val_step(model, loss_fn, images, labels):
@@ -68,9 +33,14 @@ def val_step(model, loss_fn, images, labels):
   Passes the batch of images through the model.
   Returns the resulting model predictions and loss values.
   """
-  # Feed model
-  preds = model(images)
-  loss = loss_fn(preds, labels)
+  ## ===========================================================
+  ## BEGIN: YOUR CODE.
+  ## ===========================================================
+  preds, loss = None, None
+
+  ## ===========================================================
+  ## END: YOUR CODE.
+  ## ===========================================================
 
   return preds, loss
 
@@ -131,15 +101,12 @@ if __name__ == "__main__":
   ) 
 
   ## Begin training
-  best_val_iou = -np.inf
+  best_val_loss = np.inf
   for epoch in range(epochs):
     print(f"Starting epoch {epoch+1}:")
 
     ## Metrics 
     train_loss, val_loss = 0, 0
-    train_iou, val_iou = 0, 0
-    train_prec, val_prec = 0, 0
-    train_recall, val_recall = 0, 0
 
     ## Training.
     model.train()
@@ -149,22 +116,11 @@ if __name__ == "__main__":
 
       preds, loss = train_step(model, loss_fn, optimizer, input_t, y)
 
-      preds_arr = preds.detach().cpu().numpy()
-      y_arr = y.detach().cpu().numpy()
-
-      iou, prec, recall = calculate_iou_prec_recall(preds_arr, y_arr)
-
       train_loss += loss.item()
-      train_iou += iou[0]
-      train_prec += prec[0]
-      train_recall += recall[0]
     
     # Get mean epoch-level metrics
     num_train_batches = batch_index + 1
     train_loss = train_loss/num_train_batches
-    train_iou = train_iou/num_train_batches
-    train_prec = train_prec/num_train_batches
-    train_recall = train_recall/num_train_batches
     
     ## Validation
     model.eval()
@@ -174,42 +130,24 @@ if __name__ == "__main__":
 
       preds, loss = val_step(model, loss_fn, input_t, y)
 
-      preds_arr = preds.detach().cpu().numpy()
-      y_arr = y.detach().cpu().numpy()
-
-      iou, prec, recall = calculate_iou_prec_recall(preds_arr, y_arr)
-
       val_loss += loss.item()
-      val_iou += iou[0]
-      val_prec += prec[0]
-      val_recall += recall[0]
 
     # Get mean epoch-level metrics
     num_val_batches = batch_index + 1
     val_loss = val_loss/num_val_batches
-    val_iou = val_iou/num_val_batches
-    val_prec = val_prec/num_val_batches
-    val_recall = val_recall/num_val_batches
 
     # Save model weights
-    if val_iou > best_val_iou:
-      best_val_iou = val_iou
+    if val_loss < best_val_loss:
+      best_val_loss = val_loss
       if not os.path.isdir(args.ckpt_path):
         os.makedirs(args.ckpt_path)
       print("Saving weights...")
       save_path = os.path.join(args.ckpt_path, "fcn_weights.bin")
       torch.save(model.state_dict(), save_path)
 
-    ## Print a bunch of metrics:
+    ## Print metrics:
     print(f"Training loss: {train_loss}")
-    print(f"Training IoU: {train_iou}")
-    print(f"Training prec: {train_prec}")
-    print(f"Training recall: {train_recall}")
     print(f"Validation loss: {val_loss}")
-    print(f"Validation recall: {val_recall}")
-    print(f"Validation iou: {val_iou}")
-    print(f"Validation prec: {val_prec}")
-    print(f"Validation recall: {val_recall}")
 
     print(f"Finished epoch {epoch+1}.\n")
       
