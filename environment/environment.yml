@@ -4,15 +4,16 @@ channels:
 dependencies:
   - numpy=1.18.1
   - python=3.7
-  - pytorch
-  - torchvision
   - matplotlib
   - pillow
   - opencv
   - ipython
   - tqdm
   - pip
+  - pytorch::pcytorch
+  - pytorch::torchvision
   - pip:
     - pysimplegui
     - opencv-contrib-python==4.0.0.21
     - git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI
+ 
