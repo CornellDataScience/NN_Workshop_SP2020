@@ -19,9 +19,6 @@ from pipeline.save_video import SaveVideo
 from fcn import load_fcn
 ##
 
-"""
-Demo program that displays a webcam using OpenCV
-"""
 
 ## Globals
 WEIGHTS_FILE = os.path.join("weights", "fcn_weights.bin")
@@ -86,6 +83,7 @@ def main():
     display = False
     processing = False
 
+
     # define the window layout
     layout = [[sg.Text('OpenCV Demo', size=(40, 1), justification='center', font='Helvetica 20')],
               [sg.Image(filename='', key='image')],
@@ -98,6 +96,7 @@ def main():
     # create the window and show it without the plot
     window = sg.Window('Demo Application - OpenCV Integration',
                        layout, location=(800, 400))
+
     progress_bar = window['progressbar']
 
     # ---===--- Event LOOP Read and display frames, operate the GUI --- #
@@ -141,11 +140,6 @@ def main():
             cap.release()
             cap = None
             cv2.destroyAllWindows()
-            recording = False
-            img = np.full((480, 640), 255)
-            # this is faster, shorter and needs less includes
-            imgbytes = cv2.imencode('.png', img)[1].tobytes()
-            window['image'].update(data=imgbytes)
             if writer:
                 writer.release()
 
