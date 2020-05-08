@@ -10,7 +10,7 @@ dependencies:
   - ipython
   - tqdm
   - pip
-  - pytorch::pcytorch
+  - pytorch::pytorch
   - pytorch::torchvision
   - pip:
     - pysimplegui
