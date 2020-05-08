@@ -36,4 +36,10 @@ Now you are good to go!
 
 
 ## Model Weights
+Download weights from [here]
+
+## Run Sample
+```bash
+$ python process_video.py -i dummy_video.mp4 -o dummyfolder -ov dummy_output.mp4 --weights-file weights/fcn_weights.bin --cpus 2 --queue-size 16 -p
+```
 
