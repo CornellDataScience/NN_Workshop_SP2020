@@ -124,7 +124,7 @@ if __name__ == "__main__":
   ## Set up Data Loaders.
   epochs = config["epochs"]
   train_loader, val_loader, _ = get_data_loaders(
-    args.im_id_path,
+    args.id_path,
     args.im_path,
     args.label_path,
     batch_size=config["batch_size"]
